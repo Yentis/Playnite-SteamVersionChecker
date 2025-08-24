@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="SteamVersionChecker.VersionInput"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" Width="280" Height="210">
+    
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" >
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Played version:  " Foreground="White" Margin="0,0,10,0"/>
+            <TextBox x:Name="txtPlayedVersion" Width="150"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Latest version:   " Foreground="White" Margin="0,0,10,0"/>
+            <TextBox x:Name="txtLatestVersion" Width="150" Margin="0,0,10,0"/>
+            <Button x:Name="btnFetch" Padding="5,1,5,1" Click="BtnFetch_Click">↓</Button>
+        </StackPanel>
+        
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Update months:" Foreground="White" Margin="0,0,10,0"/>
+            <TextBox x:Name="txtUpdateMonths" Width="150"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Last updated:    " Foreground="White" Margin="0,0,10,0"/>
+            <TextBox x:Name="txtLastUpdated" Width="150"/>
+        </StackPanel>
+
+        <Button x:Name="btnSave" Click="BtnSave_Click" Margin="0,0,0,5">Save</Button>
+        <Button x:Name="btnClear" Click="BtnClear_Click">Clear</Button>
+    </StackPanel>
+</UserControl>

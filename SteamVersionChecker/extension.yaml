@@ -1,0 +1,7 @@
+﻿Id: SteamVersionChecker_fbc3b6e5-1010-427e-9d4b-2d9cf96ea8cc
+Name: Steam Version Checker
+Author: Yentis
+Version: 1.0
+Module: SteamVersionChecker.dll
+Type: GenericPlugin
+Icon: icon.png
