@@ -115,6 +115,15 @@ namespace SteamVersionChecker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add missing field tag.
+        /// </summary>
+        public static string MenuAddMissingFieldTag {
+            get {
+                return ResourceManager.GetString("MenuAddMissingFieldTag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Get oldest game.
         /// </summary>
         public static string MenuGetOldestGame {
@@ -151,11 +160,29 @@ namespace SteamVersionChecker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sort links.
+        /// </summary>
+        public static string MenuSortLinks {
+            get {
+                return ResourceManager.GetString("MenuSortLinks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to SteamVersionChecker.
         /// </summary>
         public static string PluginName {
             get {
                 return ResourceManager.GetString("PluginName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing field.
+        /// </summary>
+        public static string TagMissingField {
+            get {
+                return ResourceManager.GetString("TagMissingField", resourceCulture);
             }
         }
         

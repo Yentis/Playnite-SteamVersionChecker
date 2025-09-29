@@ -153,4 +153,13 @@
   <data name="TagUpdateAvailable" xml:space="preserve">
     <value>Update available</value>
   </data>
+  <data name="MenuAddMissingFieldTag" xml:space="preserve">
+    <value>Add missing field tag</value>
+  </data>
+  <data name="TagMissingField" xml:space="preserve">
+    <value>Missing field</value>
+  </data>
+  <data name="MenuSortLinks" xml:space="preserve">
+    <value>Sort links</value>
+  </data>
 </root>

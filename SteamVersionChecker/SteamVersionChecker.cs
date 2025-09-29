@@ -6,8 +6,10 @@ using Playnite.SDK.Events;
 using Playnite.SDK.Models;
 using Playnite.SDK.Plugins;
 using SteamKit2;
+using SteamVersionChecker.Properties;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -15,7 +17,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using SteamVersionChecker.Properties;
 
 namespace SteamVersionChecker
 {
@@ -184,7 +185,6 @@ namespace SteamVersionChecker
                 ShowCloseButton = true,
             });
 
-
             window.ShowInTaskbar = false;
             window.Owner = PlayniteApi.Dialogs.GetCurrentAppWindow();
             window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -239,6 +239,100 @@ namespace SteamVersionChecker
                 MenuSection = $"@{strings.PluginName}",
                 Description = strings.MenuGetOldestGame,
                 Action = (data) => GetOldestGameAction(PlayniteApi.MainView.FilteredGames)
+            };
+
+            yield return new MainMenuItem
+            {
+                MenuSection = $"@{strings.PluginName}",
+                Description = strings.MenuSortLinks,
+                Action = (data) =>
+                {
+                    var updatedGames = new List<Game>();
+
+                    foreach (var game in PlayniteApi.Database.Games)
+                    {
+                        var links = game.Links ??= new ObservableCollection<Link>();
+                        var newLinks = new ObservableCollection<Link>(links.OrderBy(link => link.Name));
+
+                        var officialLink = newLinks.FirstOrDefault(link => link.Name.ToLower().StartsWith("official"));
+                        var steamLink = newLinks.FirstOrDefault(link => link.Name.ToLower() == "steam");
+
+                        if (officialLink != null)
+                        {
+                            officialLink.Name = "Official";
+                            newLinks.Move(newLinks.IndexOf(officialLink), 0);
+                        }
+
+                        if (steamLink != null)
+                        {
+                            newLinks.Move(newLinks.IndexOf(steamLink), officialLink != null ? 1 : 0);
+                        }
+
+                        var hasChanged = !links.SequenceEqual(newLinks);
+                        if (hasChanged)
+                        {
+                            game.Links = newLinks;
+                            updatedGames.Add(game);
+                        }
+                    }
+
+                    PlayniteApi.Database.Games.Update(updatedGames);
+                    PlayniteApi.Notifications.Add(new NotificationMessage(
+                        id: strings.MenuSortLinks,
+                        text: $"Links sorted for {updatedGames.Count} games",
+                        type: NotificationType.Info
+                    ));
+                },
+            };
+
+            yield return new MainMenuItem
+            {
+                MenuSection = $"@{strings.PluginName}",
+                Description = strings.MenuAddMissingFieldTag,
+                Action = (data) =>
+                {
+                    var tag = PlayniteApi.Database.Tags.FirstOrDefault(tag => tag.Name == strings.TagMissingField);
+                    if (tag == null) return;
+
+                    var updatedGames = new List<Game>();
+
+                    foreach (var game in PlayniteApi.Database.Games)
+                    {
+                        var tags = game.TagIds ??= new List<Guid>();
+                        var newTags = new List<Guid>(tags);
+
+                        var hasPlatforms = game.Platforms != null && game.Platforms.Count > 0;
+                        var hasMedia = !string.IsNullOrEmpty(game.Icon) && !string.IsNullOrEmpty(game.CoverImage) && !string.IsNullOrEmpty(game.BackgroundImage);
+                        var hasLinks = game.Links != null && game.Links.Count > 0;
+                        var hasDescription = !string.IsNullOrEmpty(game.Description);
+                        var releaseDate = game.ReleaseDate.GetValueOrDefault();
+                        var hasReleaseDate = releaseDate.Year > 0 && releaseDate.Month != null && releaseDate.Day != null;
+
+                        if (hasPlatforms && hasMedia && hasLinks && hasDescription && hasReleaseDate)
+                        {
+                            newTags.Remove(tag.Id);
+                        }
+                        else
+                        {
+                            newTags.AddMissing(tag.Id);
+                        }
+
+                        var hasChanged = !tags.SequenceEqual(newTags);
+                        if (hasChanged)
+                        {
+                            game.TagIds = newTags;
+                            updatedGames.Add(game);
+                        }
+                    }
+
+
+                    PlayniteApi.Database.Games.Update(updatedGames);
+                    PlayniteApi.Notifications.Add(new NotificationMessage(
+                        id: strings.MenuAddMissingFieldTag,
+                        text: $"Tag updated for {updatedGames.Count} games",
+                        type: NotificationType.Info
+                    ));
+                },
             };
         }
 
@@ -684,6 +778,11 @@ namespace SteamVersionChecker
             if (!tags.Any(tag => tag.Name == strings.TagUpdateAvailable))
             {
                 tags.Add(strings.TagUpdateAvailable);
+            }
+
+            if (!tags.Any(tag => tag.Name == strings.TagMissingField))
+            {
+                tags.Add(strings.TagMissingField);
             }
 
             var dataPath = GetPluginUserDataPath();
