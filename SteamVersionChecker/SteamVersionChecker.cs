@@ -553,8 +553,7 @@ namespace SteamVersionChecker
                 return null;
             }
 
-            var request = new SteamApps.PICSRequest(steamId);
-            var productJob = steamApps.PICSGetProductInfo(app: request, package: null);
+            var productJob = steamApps.PICSGetProductInfo(app: steamId, package: null);
 
             var resultSet = await productJob;
             var appInfo = resultSet.Results.FirstOrDefault()?.Apps[steamId];
